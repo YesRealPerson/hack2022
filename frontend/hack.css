@@ -1,0 +1,30 @@
+.input{
+    background-color: black;
+    padding-top: 20px;
+    border-style: solid;
+    border-radius: 20px;
+    border-width: 20px;
+
+}
+
+
+
+header {
+    background-color: black;
+    border-style: solid;
+    border-color: rgb(30, 32, 31);
+    border-radius: 10px;
+    border-width: 10px;
+    padding: 10px;
+    color: rgb(25, 190, 52);
+    text-align: center;
+    font-size:larger;
+    opacity:75%;
+    font-family: "Courier New";
+    
+  }
+
+  body {
+    background-image: url("glitchbackground.gif");
+    background-size: 25%;
+  }

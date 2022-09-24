@@ -27,8 +27,7 @@ async function post(url, data) {
     });
 }
 
-const boxid = "aithing";
-const box = document.getElementById("boxid");
+const box = document.getElementById("aithing");
 
 const textid = "aiout";
 const inputid = "aiin";
@@ -51,7 +50,7 @@ function output_text(text) {
 
 function input_text() {
     const inp = document.createElement("input");
-    box.appendChild(inp)
+    box.appendChild(inp);
 
     new Promise((resolve, _reject) => {
         let handler = ev => {
