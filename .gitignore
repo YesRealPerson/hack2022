@@ -1,2 +1,6 @@
 .env
 *.json
+*.txt
+test.html
+*.pem
+cert.pem
