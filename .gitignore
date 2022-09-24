@@ -3,4 +3,4 @@
 *.txt
 test.html
 *.pem
-cert.pem
+!example.txt
