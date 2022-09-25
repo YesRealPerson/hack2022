@@ -57,7 +57,12 @@ async function post(url, data) {
 const box = document.getElementById("aithing");
 
 function output_text(text) {
-    let utterance = SpeechSynthesisUtterance(text);
+     let speech = speechSynthesis.getVoices()
+    let utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = speech[0];
+    utterance.volume = 1;
+    utterance.pitch = 2;
+    utterance.rate = 1 ;
     speechSynthesis.speak(utterance);
 
     const out = document.createElement("p");
@@ -72,8 +77,8 @@ function output_text(text) {
             return;
         }
         out.innerText = text.substring(0,i+1);
-        
         i++;
+        out.scrollIntoView();
     };
     id = setInterval(interval, 20);
 }
@@ -83,6 +88,7 @@ function input_text() {
     inp.setAttribute("id","textInput");
     inp.contentEditable = true;
     box.appendChild(inp);
+    inp.scrollIntoView();
 
     return new Promise((resolve, _reject) => {
         let handler = ev => {

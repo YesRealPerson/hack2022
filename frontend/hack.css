@@ -25,26 +25,6 @@ font-size: 25px;
   width: 100%;
   text-align: center;
 }
-#loading{
-visibility:hidden;
-  position:absolute;
-display: flex;
-width: 100%;
-height:100%;
-cursor: pointer;
-align-items: center;
-justify-content: center;
-z-index: 5;
-background-color: rgba(255,255,255,0.5);
-}
-#loading p{
-color: black;
-text-align: center;
-border-radius: 6px;
-padding: 8px 0;
-position: absolute;
-z-index: 1;
-}
 #params {
   position: fixed;
   right: 2%;
@@ -59,8 +39,9 @@ z-index: 1;
   position: relative;
 }
 #loading{
+  color:black;
   visibility:hidden;
-    position:absolute;
+    position:fixed;
   display: flex;
   width: 100%;
   height:100%;
