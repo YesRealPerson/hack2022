@@ -19,11 +19,24 @@ const server = https.createServer({key: key, cert: cert}, app);
 
 let storedStrings = {};
 
+const defaults = {
+    temperature: 0.25,
+    tokens: 50,
+    predict: 0.5,
+    frequency: 0.8,
+    max: 500,
+};
+
 cohere.init(api);
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
     res.sendFile(path.join(__dirname, '/frontend/index.html'));
 })
+
+app.get("/defaultParams", (_req, res) => {
+    res.send(JSON.stringify(defaults));
+})
+
 /*
 RESPONSE:
 {
@@ -38,27 +51,19 @@ temperature - volatility of generation
 app.post("/generate", async (req, res) => {
     var inputPrompt = req.body.q;
     var hash = req.body.hash;
+
+    for (let [key, val] in Object.entries(defaults)) {
+        if(!req.body[key]) {
+            req.body[key] = val;
+        }
+    }
+
     var temp = req.body.temperature;
     var tokens = req.body.tokens;
     var predictability = req.body.predict;
     var frequencyPenalty = req.body.frequency;
     var maxTokens = req.body.max;
     var runningString = "";
-    if (temp == undefined) {
-        temp = 0.25;
-    }
-    if(tokens == undefined){
-        tokens = 50;
-    }
-    if(predictability == undefined){
-        predictability = 0.8;
-    }
-    if(frequencyPenalty == undefined){
-        frequencyPenalty = 0.8;
-    }
-    if(maxTokens == undefined){
-        maxTokens = 500;
-    }
     if (inputPrompt != undefined) {
         if (hash == undefined) {
             var millis = (new Date().getTime()).toString();
