@@ -1,40 +1,40 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width" />
     <title>hack 2022</title>
     <link href="hack.css" rel="stylesheet" type="text/css" />
     <script src="script.js" defer></script>
-</head>
+  </head>
 
+    
 
-
-<body>
-    <div id="main">
-        <header>
-            <h1>AI Assisted Stories</h1>
-        </header>
-        <div id="aithing">
-        </div>
+    <body>
         <div id="loading">
-            <p>Loading</p>
+            <p>Loading...</p>
+        </div>
+        <div id="main">
+            <header>
+                <h1>AI Assisted Stories</h1>   
+            </header>
+            <div id="aithing">
+            </div>
         </div>
         <div id="params">
-                <p>Temperature</p>
-            <input type="range" id="param_temperature" min="0" , max="5" class="params">
-                <p>Tokens</p>
-            <input type="range" id="param_tokens" min="0" max="500" class="params">
-            <p>Predict</p>
-            <input type="range" id="param_predict" min="0" , max="1" class="params">
-            <p>Frequency</p>
-            <input type="range" id="param_frequency" min="0" max="1" class="params">
-            <p>Max</p>
-            <input type="range" id="param_max" min="0" max="500" class="params">
+          <p>Temperature</p>
+      <input type="range" id="param_temperature" min="0" , max="500" class="params">
+          <p>Tokens</p>
+      <input type="range" id="param_tokens" min="0" max="500" class="params">
+      <p>Predict</p>
+      <input type="range" id="param_predict" min="0" , max="100" class="params">
+      <p>Frequency</p>
+      <input type="range" id="param_frequency" min="0" max="100" class="params">
+      <p>Max</p>
+      <input type="range" id="param_max" min="0" max="500" class="params">
 
-        </div>
-    </div>
-</body>
+  </div>
+    </body>
 
 </html>

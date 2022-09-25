@@ -5,35 +5,36 @@ const defaults_url = base_url + "defaultParams";
 let hash = null;
 
 async function load_defaults() {
-    let res = await fetch(defaults_url);
+    let res = await fetch("/defaultparams");
     let text = await res.text();
     let data = JSON.parse(text);
-    for (let [key, val] in Object.entries(data)) {
-        document.getElementById("param" + key).value = val;
+    for (var i = 0; i < Object.keys(data).length; i++) {
+        document.getElementById("param_"+Object.keys(data)[i]).value = data[Object.keys(data)[i]][0];
     }
     return res;
 }
 
-async function generate(text, defaults) {
+async function generate(text) {
+    loading = document.getElementById("loading");
+    loading.style.visibility = "visible";
     let res = await post(gen_url, {
         hash,
         q: text,
-        params: get_params(defaults),
+        params: get_params(),
     });
-    let res_text = JSON.parse(await res.text());
-    console.log(res_text.text);
-    console.log(typeof res_text.text);
-    res_text.text.replace("\"","\\\"");
-    res_text.hash.replace("\"","");
+    var txt = await res.text();
+    loading.style.visibility = "hidden"; 
+    txt.replace("\"","\\\"");
+    let res_text = JSON.parse(txt);
     hash = res_text.hash;
     return res_text.text;
 }
 
-function get_params(defaults) {
-    let params = ["temperature", "tokens", "predict", "frequency"];
+function get_params() {
+    let params = ["temperature", "tokens", "predict", "frequency", "max"];
     let ret = {};
-    for (let param in params) {
-        ret[param] = Number(document.getElementById("param" + param).value);
+    for (var i = 0; i < params.length; i++) {
+        ret[params[i]] = Number(document.getElementById("param_" + params[i]).value);
     }
     return ret;
 }
@@ -61,6 +62,7 @@ const inputid = "aiin";
 function output_text(text) {
     var newtext = text;
     const out = document.createElement("p");
+    out.setAttribute("class","textout");
     box.appendChild(out)
 
     let id;
@@ -91,6 +93,7 @@ function input_text() {
                 box.removeChild(inp);
                 const p = document.createElement("p");
                 p.innerText = text;
+                p.setAttribute("class","textout");
                 box.appendChild(p);
 
                 inp.removeEventListener("keypress", handler);
@@ -102,7 +105,6 @@ function input_text() {
 }
 
 (async () => {
-
     let defaults = await load_defaults();
     let loop = () => {
         input_text().then(async text => {
@@ -116,4 +118,3 @@ function input_text() {
     loop();
 
 })();
-
