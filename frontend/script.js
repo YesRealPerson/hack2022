@@ -56,11 +56,10 @@ async function post(url, data) {
 
 const box = document.getElementById("aithing");
 
-const textid = "aiout";
-const inputid = "aiin";
-
 function output_text(text) {
-    var newtext = text;
+    let utterance = SpeechSynthesisUtterance(text);
+    speechSynthesis.speak(utterance);
+
     const out = document.createElement("p");
     out.setAttribute("class","textout");
     box.appendChild(out)
@@ -68,11 +67,11 @@ function output_text(text) {
     let id;
     let i = 0;
     let interval = () => {
-        if (newtext.length == i) {
+        if (text.length == i) {
             clearInterval(id);
             return;
         }
-        out.innerText = newtext.substring(0,i+1);
+        out.innerText = text.substring(0,i+1);
         
         i++;
     };
