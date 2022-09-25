@@ -3,7 +3,7 @@ const crypt = require('crypto');
 const path = require('path');
 
 require('dotenv').config();
-const api = process.env. KEY;
+const api = process.env.KEY;
 
 const fs = require('fs');
 const key = fs.readFileSync('./key.pem');
@@ -17,9 +17,11 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'frontend')))
 const server = https.createServer({key: key, cert: cert}, app);
 
+let storedStrings = {};
+
 cohere.init(api);
 
-app.get("/", (req, res) =>{
+app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, '/frontend/index.html'));
 })
 /*
@@ -41,30 +43,28 @@ app.post("/generate", async (req, res) => {
     var predictability = req.body.predict;
     var frequencyPenalty = req.body.frequency;
     var runningString = "";
-    if(temp == undefined){
+    if (temp == undefined) {
         temp = 0.25;
     }
-    if(tokens == undefined){
+    if (tokens == undefined) {
         tokens = 200;
     }
-    if(predictability == undefined){
+    if (predictability == undefined) {
         predictability = 0.5;
     }
-    if(frequencyPenalty == undefined){
+    if (frequencyPenalty == undefined) {
         frequencyPenalty = 0.6;
     }
-    if(inputPrompt != undefined){
-        if(hash == undefined){
+    if (inputPrompt != undefined) {
+        if (hash == undefined) {
             var millis = (new Date().getTime()).toString();
             hash = crypt.createHash('sha1').update(millis).digest('hex');
-        }else{
-            var f = path.join(__dirname, '/currentstring/'+hash+'.txt');
-            runningString = fs.readFileSync(f);
-            runningString = runningString.toString();
+        } else {
+            runningString = storedStrings[hash].text;
         }
 
         //generated text
-        let generation =  await cohere.generate({ 
+        let generation = await cohere.generate({
             prompt: splicetxt(runningString) + inputPrompt,
             num_generations: 1,
             temperature: temp,
@@ -73,29 +73,30 @@ app.post("/generate", async (req, res) => {
             return_likelihoods: "ALL",
             frequency_penalty: frequencyPenalty
         });
-    let generatedString =  await generation.body.generations[0].text;
-    if (generatedString.includes('\n')) {
-    generatedString = generatedString.split('\n')[0];
-   }
-   runningString += inputPrompt + generatedString;
-   if (!runningString.endsWith(".") && !runningString.endsWith(",")) {
-        runningString += ". ";
-   }
-        
-        fs.writeFileSync(path.join(__dirname, '/currentstring/'+hash+'.txt'),runningString);
+        let generatedString = await generation.body.generations[0].text;
+        if (generatedString.includes('\n')) {
+            generatedString = generatedString.split('\n')[0];
+        }
+        runningString += inputPrompt + generatedString;
+        if (!runningString.endsWith(".") && !runningString.endsWith(",")) {
+            runningString += ". ";
+        }
+
+        storedStrings[hash].text = runningString;
+        storedStrings[hash].stail = Date.getTime();
         res.send(`{"text": "${generatedString}", "hash": "${hash}"}`);
     }
-    else{
+    else {
         res.send("Invalid parameters");
     }
 })
 
 const splicetxt = (txt) => {
-    if(txt.includes('.')){
+    if (txt.includes('.')) {
         let sentences = txt.split('.');
         if (sentences.length >= 5) {
             let temp = "";
-            for (let i = sentences.length-6; i < sentences.length - 1; i++) {
+            for (let i = sentences.length - 6; i < sentences.length - 1; i++) {
                 temp += sentences[i];
             }
             return temp;
@@ -103,5 +104,13 @@ const splicetxt = (txt) => {
     }
     return txt;
 }
+
+setInterval(() => {
+    for (let [key, value] of Object.entries(storedStrings)) {
+        if((Date.getTime() - value.stail) >= 18000000) {
+            delete storedStrings[key];
+        }
+    }
+}, 300000);
 
 server.listen(443);
