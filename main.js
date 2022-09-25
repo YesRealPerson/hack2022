@@ -14,6 +14,7 @@ const https = require('https');
 const exp = require('constants');
 const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'frontend')))
 const server = https.createServer({key: key, cert: cert}, app);
 
 cohere.init(api);
@@ -82,7 +83,7 @@ app.post("/generate", async (req, res) => {
    }
         
         fs.writeFileSync(path.join(__dirname, '/currentstring/'+hash+'.txt'),runningString);
-        res.send("{text: "+generatedString+", hash: "+hash+"}");
+        res.send(`{"text": "${generatedString}", "hash": "${hash}"}`);
     }
     else{
         res.send("Invalid parameters");

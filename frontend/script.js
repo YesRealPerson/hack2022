@@ -1,4 +1,4 @@
-const gen_url = window.location.href + "/generate";
+const gen_url = window.location.href + "generate";
 
 let hash = null;
 
@@ -7,9 +7,10 @@ async function generate(text) {
         hash,
         q: text,
     });
-    let data = JSON.parse(await res.text());
+    let res_text = await res.text();
+    let data = JSON.parse(res_text);
     hash = data.hash;
-    set_output_prompt(data.text);
+    return data.text;
 }
 
 async function post(url, data) {
@@ -33,29 +34,32 @@ const textid = "aiout";
 const inputid = "aiin";
 
 function output_text(text) {
+    var newtext = text;
     const out = document.createElement("p");
     box.appendChild(out)
 
     let id;
     let i = 0;
     let interval = () => {
-        if (text.length == i) {
+        if (newtext.length == i) {
             clearInterval(id);
             return;
         }
-        out.innerText += text[i];
+        out.innerText = newtext.substring(0,i);
+        
+        i++;
     };
-    id = setInterval(interval, 40);
+    id = setInterval(interval, 20);
 }
 
-function input_text() {
+const input_text = () =>  {
     const inp = document.createElement("input");
     box.appendChild(inp);
 
-    new Promise((resolve, _reject) => {
+    return new Promise((resolve, _reject) => {
         let handler = ev => {
             if (ev.key == "Enter") {
-                let text = inp.innerText;
+                let text = inp.value;
 
                 box.removeChild(inp);
                 const p = document.createElement("p");
@@ -72,7 +76,7 @@ function input_text() {
 
 (async () => {
 
-    function loop() {
+    let loop = () => {
         input_text().then(async text => {
             output_text(
                 await generate(text)
