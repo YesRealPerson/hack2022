@@ -7,10 +7,13 @@ async function generate(text) {
         hash,
         q: text,
     });
-    let res_text = await res.text();
-    let data = JSON.parse(res_text);
-    hash = data.hash;
-    return data.text;
+    let res_text = JSON.parse(await res.text());
+    console.log(res_text.text);
+    console.log(typeof res_text.text);
+    res_text.text.replace("\"","\\\"");
+    res_text.hash.replace("\"","");
+    hash = res_text.hash;
+    return res_text.text;
 }
 
 async function post(url, data) {
@@ -45,7 +48,7 @@ function output_text(text) {
             clearInterval(id);
             return;
         }
-        out.innerText = newtext.substring(0,i);
+        out.innerText = newtext.substring(0,i+1);
         
         i++;
     };
@@ -53,13 +56,15 @@ function output_text(text) {
 }
 
 const input_text = () =>  {
-    const inp = document.createElement("input");
+    const inp = document.createElement("div");
+    inp.setAttribute("id","textInput");
+    inp.contentEditable = true;
     box.appendChild(inp);
 
     return new Promise((resolve, _reject) => {
         let handler = ev => {
             if (ev.key == "Enter") {
-                let text = inp.value;
+                let text = inp.innerText;
 
                 box.removeChild(inp);
                 const p = document.createElement("p");

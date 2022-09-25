@@ -40,18 +40,22 @@ app.post("/generate", async (req, res) => {
     var tokens = req.body.tokens;
     var predictability = req.body.predict;
     var frequencyPenalty = req.body.frequency;
+    var maxTokens = req.body.max;
     var runningString = "";
     if(temp == undefined){
         temp = 0.25;
     }
     if(tokens == undefined){
-        tokens = 200;
+        tokens = 50;
     }
     if(predictability == undefined){
-        predictability = 0.5;
+        predictability = 0.8;
     }
     if(frequencyPenalty == undefined){
-        frequencyPenalty = 0.6;
+        frequencyPenalty = 0.8;
+    }
+    if(maxTokens == undefined){
+        maxTokens = 500;
     }
     if(inputPrompt != undefined){
         if(hash == undefined){
@@ -71,7 +75,8 @@ app.post("/generate", async (req, res) => {
             k: tokens,
             p: predictability,
             return_likelihoods: "ALL",
-            frequency_penalty: frequencyPenalty
+            frequency_penalty: frequencyPenalty,
+            max_tokens: maxTokens
         });
     let generatedString =  await generation.body.generations[0].text;
     if (generatedString.includes('\n')) {
@@ -93,9 +98,9 @@ app.post("/generate", async (req, res) => {
 const splicetxt = (txt) => {
     if(txt.includes('.')){
         let sentences = txt.split('.');
-        if (sentences.length >= 5) {
+        if (sentences.length >= 10) {
             let temp = "";
-            for (let i = sentences.length-6; i < sentences.length - 1; i++) {
+            for (let i = sentences.length-11; i < sentences.length - 1; i++) {
                 temp += sentences[i];
             }
             return temp;
